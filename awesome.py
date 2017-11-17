@@ -78,7 +78,7 @@ class Obstacle_Right(Obstacle):
             self.x=960
 
 class Obstacle_Down(Obstacle):
-    def __init__(self,x,y):
+    def __init__(self,x,y,name):
         self.x=random.randrange(0,920,50)
         self.y=720
         self.name=name
@@ -180,7 +180,7 @@ def main():
     BackGround=Background('img/background.png',[0,0])
     obstacle_list=[apple,fish_fresh,rice,apple_rotten,blowfish,fish_rotten,rice_rotten]
     obstacle1,obstacle2,obstacle3=apple,rice,rice_rotten
-    box=[Obstacle_Right(0,0,apple),Obstacle_Right(0,0,fish_fresh),Obstacle_Right(0,0,fish_rotten)]
+    box=[Obstacle_Right(0,0,apple),Obstacle_Left(0,0,fish_fresh),Obstacle_Up(0,0,fish_rotten),Obstacle_Down(0,0,rice)]
     # Game initialization
     sumo=Sumo(450,350)
 
