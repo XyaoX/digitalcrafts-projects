@@ -1,5 +1,6 @@
 import pygame
 import random
+import time
 
 KEY_UP = 273
 KEY_DOWN = 274
@@ -35,37 +36,60 @@ class Obstacle(object):
 
 
 class Obstacle_Up(Obstacle):
-    def __init__(self,x,y):
+    def __init__(self,x,y,name):
         self.y=0
         self.x=random.randrange(0,960,50)
+        self.name=name
+
+    def name(self):
+        return name
 
     def move(self):
         self.y+=7
+        if self.y>720:
+            self.y=-50
 
 class Obstacle_Left(Obstacle):
-    def __init__(self,x,y):
+    def __init__(self,x,y,name):
         self.x=0
         self.y=random.randrange(0,720,50)
+        self.name=name
+
+    def name(self):
+        return name
 
     def move(self):
         self.x+=7
+        if self.x>960:
+            self.x=-50
 
 class Obstacle_Right(Obstacle):
-    def __init__(self,x,y):
+    def __init__(self,x,y,name):
         self.x=920
         self.y=random.randrange(0,720,50)
+        self.name=name
+
+    def name(self):
+        return name
 
     def move(self):
         self.x-=7
+        if self.x<0:
+            self.x=960
 
 class Obstacle_Down(Obstacle):
     def __init__(self,x,y):
         self.x=random.randrange(0,920,50)
         self.y=720
+        self.name=name
+
+    def name(self):
+        return name
 
     def move(self):
         self.y-=7
-
+        if self.y<0:
+            self.y=750
 
 
 class Sumo(object):
@@ -113,14 +137,6 @@ rice_rotten=pygame.image.load('img/mov/Rice_rotten.png')
 good_food=[apple,fish_fresh,rice]
 bad_food=[apple_rotten,blowfish,fish_rotten,rice_rotten]
 
-def obstacle():
-    counterx=random.randrange(0,960,50)
-
-def move():
-    random.choice(good_food)
-
-
-
 
 
 def animation(timer):
@@ -154,8 +170,6 @@ def animation(timer):
 
 
 
-
-
 def main():
     # declare the size of the canvas
     width = 960
@@ -164,8 +178,9 @@ def main():
     pygame.init()
     screen = pygame.display.set_mode((width, height))
     BackGround=Background('img/background.png',[0,0])
-
-    apples=Obstacle_Left(0,0)
+    obstacle_list=[apple,fish_fresh,rice,apple_rotten,blowfish,fish_rotten,rice_rotten]
+    obstacle1,obstacle2,obstacle3=apple,rice,rice_rotten
+    box=[Obstacle_Right(0,0,apple),Obstacle_Right(0,0,fish_fresh),Obstacle_Right(0,0,fish_rotten)]
     # Game initialization
     sumo=Sumo(450,350)
 
@@ -213,18 +228,19 @@ def main():
         # Game logic
         sumo.update()
         sumo.border()
-        apples.move()
+        #Loop for obstacles 
+        for x in box:
+            x.move()
 
         # Draw background
         screen.fill(white_color)
         screen.blit(BackGround.image,BackGround.rect)
         screen.blit(animation(seconds),(sumo.x,sumo.y))
-        while not stop_game:
-            screen.blit(apple,(apples.x,apples.y))
 
-        # Game display
-        # ball.render(screen)
+        for i in box:
+            screen.blit(i.name,(i.x,i.y))
 
+        #Set the Gui title to "Con sumo"
         pygame.display.set_caption("Con Sumo")
 
         pygame.display.update()
