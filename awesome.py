@@ -25,80 +25,85 @@ class Background(pygame.sprite.Sprite):
         self.rect.left, self.rect.top=location
 
 
-class Obstacle(object):
-    def __init__(self,x,y):
-        self.x=0
-        self.y=0
 
-    def update(self):
-        self.x +=self.speed_x
-        self.y += self.speed_y
-
-
-class Obstacle_Up(Obstacle):
+class Obstacle_Up(pygame.sprite.Sprite):
     def __init__(self,x,y,name):
         self.y=0
         self.x=random.randrange(0,960,50)
-        self.name=name
+        self.image=name
+        self.rect = self.image.get_rect()
+        pygame.sprite.Sprite.__init__(self)
 
     def name(self):
         return name
 
     def move(self):
-        self.y+=7
-        if self.y>720:
+        self.y+=5
+        if self.y>1520:
             self.y=-50
 
-class Obstacle_Left(Obstacle):
+
+class Obstacle_Left(pygame.sprite.Sprite):
     def __init__(self,x,y,name):
         self.x=0
         self.y=random.randrange(0,720,50)
         self.name=name
+        self.image = pygame.Surface([x, y])
+        self.rect = self.image.get_rect()
+        pygame.sprite.Sprite.__init__(self)
 
     def name(self):
         return name
 
     def move(self):
-        self.x+=7
-        if self.x>960:
+        self.x+=5
+        if self.x>1200:
             self.x=-50
 
-class Obstacle_Right(Obstacle):
+class Obstacle_Right(pygame.sprite.Sprite):
     def __init__(self,x,y,name):
         self.x=920
         self.y=random.randrange(0,720,50)
         self.name=name
+        self.image = pygame.Surface([x, y])
+        self.rect = self.image.get_rect()
+        pygame.sprite.Sprite.__init__(self)
 
     def name(self):
         return name
 
     def move(self):
-        self.x-=7
-        if self.x<0:
+        self.x-=5
+        if self.x<-550:
             self.x=960
 
-class Obstacle_Down(Obstacle):
+class Obstacle_Down(pygame.sprite.Sprite):
     def __init__(self,x,y,name):
         self.x=random.randrange(0,920,50)
         self.y=720
         self.name=name
+        self.image = pygame.Surface([x, y])
+        self.rect = self.image.get_rect()
+        pygame.sprite.Sprite.__init__(self)
 
     def name(self):
         return name
 
     def move(self):
-        self.y-=7
-        if self.y<0:
+        self.y-=5
+        if self.y<-1050:
             self.y=750
 
 
-class Sumo(object):
-    def __init__(self, x, y):
+class Sumo(pygame.sprite.Sprite):
+    def __init__(self, x, y,z):
         self.x = x
         self.y = y
         self.speed_x = 0
         self.speed_y = 0
-        self.radius = 50
+        self.image = z
+        self.rect = self.image.get_rect()
+        pygame.sprite.Sprite.__init__(self)
 
     def update(self):
         self.x += self.speed_x
@@ -134,6 +139,10 @@ fish_fresh=pygame.image.load('img/mov/Fish_fresh.png')
 fish_rotten=pygame.image.load('img/mov/Fish_rotten.png')
 rice=pygame.image.load('img/mov/Rice_fresh.png')
 rice_rotten=pygame.image.load('img/mov/Rice_rotten.png')
+small_fish=pygame.image.load('img/mov/Fish_fresh.png')
+small_fish=pygame.transform.scale(small_fish,(40,40))
+small_apple=pygame.image.load('img/mov/Apple.png')
+small_apple=pygame.transform.scale(small_apple,(40,40))
 good_food=[apple,fish_fresh,rice]
 bad_food=[apple_rotten,blowfish,fish_rotten,rice_rotten]
 
@@ -180,13 +189,13 @@ def main():
     BackGround=Background('img/background.png',[0,0])
     obstacle_list=[apple,fish_fresh,rice,apple_rotten,blowfish,fish_rotten,rice_rotten]
     obstacle1,obstacle2,obstacle3=apple,rice,rice_rotten
-    box=[Obstacle_Right(0,0,apple),Obstacle_Left(0,0,fish_fresh),Obstacle_Up(0,0,fish_rotten),Obstacle_Down(0,0,rice)]
+    box=[Obstacle_Right(0,0,apple),Obstacle_Left(0,0,fish_fresh),Obstacle_Up(0,0,fish_rotten),Obstacle_Down(0,0,rice),Obstacle_Down(0,0,small_fish),Obstacle_Up(0,0,small_apple)]
     # Game initialization
-    sumo=Sumo(450,350)
+    seconds=(pygame.time.get_ticks()-start_ticks)/1000
+    sumo=Sumo(450,350,animation(seconds))
 
     stop_game = False
     while not stop_game:
-        seconds=(pygame.time.get_ticks()-start_ticks)/1000
         for event in pygame.event.get():
             # Event handling
             if event.type == pygame.KEYDOWN:
@@ -228,6 +237,16 @@ def main():
         # Game logic
         sumo.update()
         sumo.border()
+
+        # if seconds>10:
+        #     box.append()
+        for enemy in box:
+            if pygame.sprite.collide_rect(sumo,enemy):
+                print "Collide"
+                box.remove(enemy)
+
+
+
         #Loop for obstacles 
         for x in box:
             x.move()
